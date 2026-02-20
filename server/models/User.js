@@ -19,7 +19,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["recruiter", "applicant"],
       required: true
-    }
+    },
+   education: {
+      degree: { type: String },
+     institution: { type: String },
+     year: { type: String },
+},
   },
   { timestamps: true }
 );

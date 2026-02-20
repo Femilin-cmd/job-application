@@ -15,4 +15,5 @@ router.get("/recruiter", protect, getApplicationsForRecruiter);
 router.patch("/:id", protect, updateApplicationStatus);
 router.get("/applicant", protect, getApplicationsForApplicant);
 
+
 module.exports = router;

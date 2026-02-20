@@ -32,10 +32,20 @@ exports.createJob = async (req, res) => {
 
 exports.getJobs = async (req, res) => {
   try {
-    const jobs = await Job.find().sort({ createdAt: -1 });
+    const keyword = req.query.keyword
+      ? {
+          $or: [
+            { title: { $regex: req.query.keyword, $options: "i" } },
+            { company: { $regex: req.query.keyword, $options: "i" } },
+            { description: { $regex: req.query.keyword, $options: "i" } },
+            { skills: { $regex: req.query.keyword, $options: "i" } },
+          ],
+        }
+      : {};
 
-    res.status(200).json(jobs);
+    const jobs = await Job.find(keyword).sort({ createdAt: -1 });
 
+    res.json(jobs);
   } catch (error) {
     console.error("GET JOBS ERROR:", error);
     res.status(500).json({ message: "Server error" });
