@@ -2,7 +2,7 @@ const Job = require("../models/Job");
 
 exports.createJob = async (req, res) => {
   try {
-    const { title, company, description, skills, location } = req.body;
+    const { title, company, description, skills, location, expiryDate } = req.body;
 
     // only recruiter can create job
     if (req.user.role !== "recruiter") {
@@ -15,6 +15,7 @@ exports.createJob = async (req, res) => {
       description,
       skills,
       location,
+      expiryDate,
       createdBy: req.user.id
     });
 
@@ -37,6 +38,29 @@ exports.getJobs = async (req, res) => {
 
   } catch (error) {
     console.error("GET JOBS ERROR:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.deleteJob = async (req, res) => {
+  try {
+    if (req.user.role !== "recruiter") {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    const job = await Job.findOneAndDelete({
+      _id: req.params.id,
+      createdBy: req.user.id
+    });
+
+    if (!job) {
+      return res.status(404).json({ message: "Job not found or not authorized" });
+    }
+
+    res.status(200).json({ message: "Job deleted successfully" });
+
+  } catch (error) {
+    console.error("DELETE JOB ERROR:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
