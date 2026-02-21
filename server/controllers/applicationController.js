@@ -1,5 +1,8 @@
 const Application = require("../models/Application");
+const Job = require("../models/Job");
 
+
+// ================= UPDATE APPLICATION STATUS =================
 exports.updateApplicationStatus = async (req, res) => {
   try {
     if (req.user.role !== "recruiter") {
@@ -16,85 +19,69 @@ exports.updateApplicationStatus = async (req, res) => {
 
     res.status(200).json({
       message: "Application status updated",
-      application
+      application,
     });
-
   } catch (error) {
     console.error("UPDATE STATUS ERROR:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
+
+// ================= APPLY TO JOB =================
 exports.applyToJob = async (req, res) => {
   try {
-    const { jobId } = req.body;
-    const Job = require("../models/Job");
-
-const job = await Job.findById(jobId);
-
-if (!job) {
-  return res.status(404).json({ message: "Job not found" });
-}
-
-if (new Date() > job.expiryDate) {
-  return res.status(400).json({ message: "Job application deadline passed" });
-}
-    const resume = req.file ? req.file.filename : null;
-
     if (req.user.role !== "applicant") {
       return res.status(403).json({ message: "Only applicants can apply" });
     }
 
+    const { jobId } = req.body;
+
+    const job = await Job.findById(jobId);
+
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    // 🔥 Prevent duplicate application
     const existingApplication = await Application.findOne({
       job: jobId,
-      applicant: req.user.id
+      applicant: req.user.id,
     });
 
     if (existingApplication) {
-      return res.status(400).json({ message: "Already applied to this job" });
+      return res.status(400).json({
+        message: "You have already applied for this job",
+      });
     }
+
+    // 🔥 Check expiry
+    if (job.expiryDate && new Date() > job.expiryDate) {
+      return res
+        .status(400)
+        .json({ message: "Job application deadline passed" });
+    }
+
+    const resume = req.file ? req.file.filename : null;
 
     const application = await Application.create({
       job: jobId,
       applicant: req.user.id,
-      resume
+      resume,
     });
 
     res.status(201).json({
       message: "Application submitted successfully",
-      application
+      application,
     });
-
   } catch (error) {
     console.error("APPLY ERROR:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-exports.getApplicationsForRecruiter = async (req, res) => {
-  try {
-    if (req.user.role !== "recruiter") {
-      return res.status(403).json({ message: "Access denied" });
-    }
 
-    const applications = await Application.find()
-      .populate({
-        path: "job",
-        match: { createdBy: req.user.id }
-      })
-      .populate("applicant", "name email");
-
-    // remove applications where job didn't match
-    const filtered = applications.filter(app => app.job !== null);
-
-    res.status(200).json(filtered);
-
-  } catch (error) {
-    console.error("GET APPLICATIONS ERROR:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-};
-
+// ================= GET APPLICATIONS FOR APPLICANT =================
 exports.getApplicationsForApplicant = async (req, res) => {
   try {
     if (req.user.role !== "applicant") {
@@ -102,15 +89,37 @@ exports.getApplicationsForApplicant = async (req, res) => {
     }
 
     const applications = await Application.find({
-      applicant: req.user.id
+      applicant: req.user.id,
     })
       .populate("job")
       .sort({ createdAt: -1 });
 
     res.status(200).json(applications);
-
   } catch (error) {
     console.error("GET APPLICANT APPLICATIONS ERROR:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+// ================= GET APPLICATIONS FOR RECRUITER =================
+exports.getApplicationsForRecruiter = async (req, res) => {
+  try {
+    if (req.user.role !== "recruiter") {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    const { jobId } = req.query;
+
+    const applications = await Application.find({
+      job: jobId,
+    })
+      .populate("applicant", "name email")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(applications);
+  } catch (error) {
+    console.error("RECRUITER APPLICATIONS ERROR:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

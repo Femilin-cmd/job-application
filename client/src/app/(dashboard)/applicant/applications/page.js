@@ -9,22 +9,19 @@ export default function MyApplications() {
   useEffect(() => {
     const fetchApplications = async () => {
       try {
-        const token = document.cookie
-          .split("; ")
-          .find((row) => row.startsWith("token="))
-          ?.split("=")[1];
+        const token = localStorage.getItem("token");
 
         const res = await fetch(
           "http://localhost:5000/api/applications/applicant",
           {
             headers: {
-              Authorization: token,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
 
         const data = await res.json();
-        setApplications(data);
+        setApplications(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("Error fetching applications");
       }

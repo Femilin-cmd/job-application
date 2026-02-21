@@ -26,6 +26,7 @@ export default function Login() {
       });
 
       const data = await res.json();
+      localStorage.setItem("token", data.token);
 
       if (res.ok) {
         // Store authentication in cookies for middleware RBAC

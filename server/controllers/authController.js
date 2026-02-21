@@ -1,46 +1,29 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken"); 
+const jwt = require("jsonwebtoken");
 
 exports.register = async (req, res) => {
-  console.log("REGISTER API HIT");
-
   try {
     const { name, email, password, role } = req.body;
 
-    // check if user already exists
-    const userExists = await User.findOne({ email });
-    if (userExists) {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // create user
-    const user = await User.create({
+    await User.create({
       name,
       email,
       password: hashedPassword,
-      role
+      role,
     });
 
-    res.status(201).json({
-      message: "User registered successfully",
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role
-      }
-    });
-
-  } 
-  catch (error) {
-  console.error("REGISTER ERROR:", error);
-  return res.status(500).json({ error: error.message });
-}
-
+    res.status(201).json({ message: "User registered successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
 };
 
 exports.login = async (req, res) => {
@@ -59,7 +42,7 @@ exports.login = async (req, res) => {
 
     const token = jwt.sign(
       { id: user._id, role: user.role },
-      "secretkey",
+      process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
 
@@ -74,45 +57,20 @@ exports.login = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("LOGIN ERROR:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-// GET PROFILE
 exports.getProfile = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id).select("-password");
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
+  const user = await User.findById(req.user.id).select("-password");
+  res.json(user);
 };
 
-// UPDATE PROFILE
 exports.updateProfile = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id);
+  const user = await User.findById(req.user.id);
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+  user.name = req.body.name || user.name;
+  await user.save();
 
-    user.name = req.body.name || user.name;
-
-    if (req.body.education) {
-      user.education = {
-        degree: req.body.education.degree || user.education?.degree,
-        institution:
-          req.body.education.institution || user.education?.institution,
-        year: req.body.education.year || user.education?.year,
-      };
-    }
-
-    const updatedUser = await user.save();
-
-    res.json(updatedUser);
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
+  res.json({ message: "Profile updated" });
 };

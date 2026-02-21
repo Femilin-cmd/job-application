@@ -25,6 +25,11 @@ const userSchema = new mongoose.Schema(
      institution: { type: String },
      year: { type: String },
 },
+    company: {
+  name: { type: String },
+  website: { type: String },
+  description: { type: String },
+},
   },
   { timestamps: true }
 );
