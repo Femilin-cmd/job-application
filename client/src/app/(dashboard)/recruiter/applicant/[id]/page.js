@@ -19,7 +19,7 @@ export default function RecruiterViewApplicant() {
         const res = await fetch(
           `http://localhost:5000/api/users/${id}`,
           {
-            headers: { Authorization: token },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
 

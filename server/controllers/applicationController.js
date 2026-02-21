@@ -43,7 +43,7 @@ exports.applyToJob = async (req, res) => {
       return res.status(404).json({ message: "Job not found" });
     }
 
-    // 🔥 Prevent duplicate application
+    //  Prevent duplicate application
     const existingApplication = await Application.findOne({
       job: jobId,
       applicant: req.user.id,
@@ -55,7 +55,7 @@ exports.applyToJob = async (req, res) => {
       });
     }
 
-    // 🔥 Check expiry
+    //  Check expiry
     if (job.expiryDate && new Date() > job.expiryDate) {
       return res
         .status(400)
@@ -111,9 +111,17 @@ exports.getApplicationsForRecruiter = async (req, res) => {
 
     const { jobId } = req.query;
 
-    const applications = await Application.find({
-      job: jobId,
-    })
+    const job = await Job.findById(jobId);
+
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    if (job.createdBy.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Not your job" });
+    }
+
+    const applications = await Application.find({ job: jobId })
       .populate("applicant", "name email")
       .sort({ createdAt: -1 });
 

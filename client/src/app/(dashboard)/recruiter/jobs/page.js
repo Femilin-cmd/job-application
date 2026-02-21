@@ -8,34 +8,36 @@ export default function RecruiterJobs() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const token = localStorage.getItem("token"); 
+  const fetchJobs = async () => {
+    try {
+      const token = localStorage.getItem("token");
 
-        const res = await fetch(
-          "http://localhost:5000/api/jobs",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+      const res = await fetch(
+        "http://localhost:5000/api/jobs/recruiter",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-        const data = await res.json();
-        console.log(data);
-        setJobs(data);
-      } catch (error) {
-        console.error("Error fetching recruiter jobs");
-      }
+      const data = await res.json();
+      console.log("FULL RESPONSE:", data);
+
+      setJobs(data.jobs || []);
+    } catch (error) {
+      console.error("Fetch error:", error);
+      setJobs([]);
+    } finally {
       setLoading(false);
-    };
+    }
+  };
 
-    fetchJobs();
-  }, []);
+  fetchJobs();
+}, []);
 
   return (
     <div className="max-w-7xl mx-auto space-y-8">
-
       <h1 className="text-3xl font-bold dark:text-white">
         My Job Listings
       </h1>
@@ -49,27 +51,64 @@ export default function RecruiterJobs() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {jobs.map((job) => (
-            <Link
+            <div
               key={job._id}
-              href={`/recruiter/jobs/${job._id}`}
-              className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow hover:shadow-xl transition block"
+              className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow hover:shadow-xl"
             >
-              <h2 className="text-xl font-semibold dark:text-white">
-                {job.title}
-              </h2>
+              <Link href={`/recruiter/jobs/${job._id}`}>
+                <h2 className="text-xl font-semibold dark:text-white">
+                  {job.title}
+                </h2>
 
-              <p className="text-sm text-gray-500 mt-2">
-                {job.company}
-              </p>
+                <p className="text-sm text-gray-500 mt-2">
+                  {job.company}
+                </p>
 
-              <p className="text-xs text-gray-400 mt-3">
-                Expires: {new Date(job.expiryDate).toLocaleDateString()}
-              </p>
-            </Link>
+                <p className="text-sm text-blue-500 mt-2">
+                  Applications: {job.applicationCount}
+                </p>
+
+                <p className="text-xs text-gray-400 mt-3">
+                  Expires:{" "}
+                  {job.expiryDate
+                    ? new Date(job.expiryDate).toLocaleDateString()
+                    : "N/A"}
+                </p>
+              </Link>
+
+              <Link
+                href={`/recruiter/jobs/${job._id}/edit`}
+                className="mt-4 inline-block bg-blue-500 text-white px-3 py-1 rounded mr-2"
+              >
+                Edit
+              </Link>
+
+              <button
+                onClick={async () => {
+                  const token = localStorage.getItem("token");
+
+                  await fetch(
+                    `http://localhost:5000/api/jobs/${job._id}`,
+                    {
+                      method: "DELETE",
+                      headers: {
+                        Authorization: `Bearer ${token}`,
+                      },
+                    }
+                  );
+
+                  setJobs((prev) =>
+                    prev.filter((j) => j._id !== job._id)
+                  );
+                }}
+                className="mt-4 bg-red-500 text-white px-3 py-1 rounded"
+              >
+                Delete
+              </button>
+            </div>
           ))}
         </div>
       )}
-
     </div>
   );
 }

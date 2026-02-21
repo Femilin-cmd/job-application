@@ -13,21 +13,23 @@ export default function BrowseJobs() {
         const res = await fetch(
           `http://localhost:5000/api/jobs?keyword=${search}`
         );
+
         const data = await res.json();
-        setJobs(data);
+
+        setJobs(data.jobs || []); // ✅ FIXED
       } catch (error) {
         console.error("Error fetching jobs");
+        setJobs([]);
       }
     };
 
     fetchJobs();
-  }, [search]); // ← THIS IS IMPORTANT
+  }, [search]);
 
   const isExpired = (date) => new Date(date) < new Date();
 
   return (
     <div className="max-w-7xl mx-auto space-y-8">
-
       <h1 className="text-3xl font-bold dark:text-white">
         Browse Jobs
       </h1>
@@ -55,7 +57,7 @@ export default function BrowseJobs() {
                   {job.title}
                 </h2>
 
-                {isExpired(job.expiryDate) && (
+                {job.expiryDate && isExpired(job.expiryDate) && (
                   <span className="text-xs bg-red-500 text-white px-3 py-1 rounded-full">
                     Closed
                   </span>
@@ -67,13 +69,15 @@ export default function BrowseJobs() {
               </p>
 
               <p className="text-xs text-gray-400 mt-3">
-                Expires: {new Date(job.expiryDate).toLocaleDateString()}
+                Expires:{" "}
+                {job.expiryDate
+                  ? new Date(job.expiryDate).toLocaleDateString()
+                  : "N/A"}
               </p>
             </Link>
           ))}
         </div>
       )}
-
     </div>
   );
 }

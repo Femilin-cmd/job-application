@@ -63,7 +63,7 @@ export default function ApplicantProfile() {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: token,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             name: form.name,

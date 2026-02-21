@@ -23,7 +23,7 @@ export default function RecruiterJobDetails() {
         const jobRes = await fetch(
           `http://localhost:5000/api/jobs/${id}`,
           {
-            headers: { Authorization: token },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
 
