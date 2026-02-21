@@ -24,7 +24,7 @@ export default function RecruiterProfile() {
         const res = await fetch(
           "http://localhost:5000/api/auth/profile",
           {
-            headers: { Authorization: token },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
 
@@ -64,7 +64,7 @@ export default function RecruiterProfile() {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: token,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             name: form.name,

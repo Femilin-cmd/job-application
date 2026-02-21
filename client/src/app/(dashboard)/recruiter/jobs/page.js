@@ -13,7 +13,7 @@ export default function RecruiterJobs() {
         const token = localStorage.getItem("token"); 
 
         const res = await fetch(
-          "http://localhost:5000/api/jobs/recruiter",
+          "http://localhost:5000/api/jobs",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -22,7 +22,8 @@ export default function RecruiterJobs() {
         );
 
         const data = await res.json();
-        setJobs(Array.isArray(data.jobs) ? data.jobs : []);
+        console.log(data);
+        setJobs(data);
       } catch (error) {
         console.error("Error fetching recruiter jobs");
       }

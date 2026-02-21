@@ -34,12 +34,12 @@ export default function RecruiterJobDetails() {
         const appRes = await fetch(
           `http://localhost:5000/api/applications/recruiter?jobId=${id}`,
           {
-            headers: { Authorization: token },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
 
         const appData = await appRes.json();
-        setApplications(appData);
+        setApplications(Array.isArray(appData) ? appData : []);
       } catch (error) {
         console.error("Error fetching recruiter job details");
       }
@@ -63,7 +63,7 @@ export default function RecruiterJobDetails() {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: token,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ status }),
         }
