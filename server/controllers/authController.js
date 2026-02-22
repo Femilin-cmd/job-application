@@ -74,3 +74,33 @@ exports.updateProfile = async (req, res) => {
 
   res.json({ message: "Profile updated" });
 };
+
+exports.updateProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Update basic fields
+    user.name = req.body.name || user.name;
+
+    // Update education if exists
+    if (req.body.education) {
+      user.education = {
+        degree: req.body.education.degree || user.education?.degree,
+        institution: req.body.education.institution || user.education?.institution,
+        year: req.body.education.year || user.education?.year,
+      };
+    }
+
+    const updatedUser = await user.save();
+
+    res.status(200).json(updatedUser);
+
+  } catch (error) {
+    console.error("UPDATE PROFILE ERROR:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
