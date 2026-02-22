@@ -52,12 +52,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-gray-100 dark:bg-black">
-      <Link 
-  href="/" 
-  className="text-sm text-gray-500 hover:underline mb-4 inline-block"
->
-  ← Back
-</Link>
+   
       <form
         onSubmit={handleLogin}
         className="w-full max-w-md bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-2xl"
@@ -65,6 +60,12 @@ export default function Login() {
         <h2 className="text-2xl font-bold mb-6 text-center dark:text-white">
           Login
         </h2>
+           <Link 
+           href="/" 
+            className="text-sm text-gray-500 hover:underline mb-4 inline-block"
+          >
+                  Back
+            </Link>
 
         <input
           type="email"
