@@ -22,7 +22,7 @@ export default function RecruiterProfile() {
           ?.split("=")[1];
 
         const res = await fetch(
-          "http://localhost:5000/api/auth/profile",
+          "https://job-application-backend-gw1n.onrender.com/api/auth/profile",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -59,7 +59,7 @@ export default function RecruiterProfile() {
         ?.split("=")[1];
 
       const res = await fetch(
-        "http://localhost:5000/api/auth/profile",
+        "https://job-application-backend-gw1n.onrender.com/api/auth/profile",
         {
           method: "PUT",
           headers: {

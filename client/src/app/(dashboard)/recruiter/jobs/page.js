@@ -13,7 +13,7 @@ export default function RecruiterJobs() {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        "http://localhost:5000/api/jobs/recruiter",
+        "https://job-application-backend-gw1n.onrender.com/api/jobs/recruiter",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -88,7 +88,7 @@ export default function RecruiterJobs() {
                   const token = localStorage.getItem("token");
 
                   await fetch(
-                    `http://localhost:5000/api/jobs/${job._id}`,
+                    `https://job-application-backend-gw1n.onrender.com/api/jobs/${job._id}`,
                     {
                       method: "DELETE",
                       headers: {

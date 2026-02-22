@@ -15,7 +15,7 @@ export default function JobDetails() {
 
   const fetchJob = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/jobs/${id}`);
+      const res = await axios.get(`https://job-application-backend-gw1n.onrender.com/api/jobs/${id}`);
       setJob(res.data);
     } catch (error) {
       console.error(error);
@@ -36,7 +36,7 @@ export default function JobDetails() {
       formData.append("jobId", id);
 
       await axios.post(
-        "http://localhost:5000/api/applications",
+        "https://job-application-backend-gw1n.onrender.com/api/applications",
         formData,
         {
           headers: {

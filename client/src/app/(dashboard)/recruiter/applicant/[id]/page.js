@@ -17,7 +17,7 @@ export default function RecruiterViewApplicant() {
           ?.split("=")[1];
 
         const res = await fetch(
-          `http://localhost:5000/api/users/${id}`,
+          `https://job-application-backend-gw1n.onrender.com/api/users/${id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }

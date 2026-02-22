@@ -21,7 +21,7 @@ export default function RecruiterJobDetails() {
 
         // Fetch job details
         const jobRes = await fetch(
-          `http://localhost:5000/api/jobs/${id}`,
+          `https://job-application-backend-gw1n.onrender.com/api/jobs/${id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -32,7 +32,7 @@ export default function RecruiterJobDetails() {
 
         // Fetch applications for this job
         const appRes = await fetch(
-          `http://localhost:5000/api/applications/recruiter?jobId=${id}`,
+          `https://job-application-backend-gw1n.onrender.com/api/applications/recruiter?jobId=${id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -58,7 +58,7 @@ export default function RecruiterJobDetails() {
         ?.split("=")[1];
 
       await fetch(
-        `http://localhost:5000/api/applications/${applicationId}`,
+        `https://job-application-backend-gw1n.onrender.com/api/applications/${applicationId}`,
         {
           method: "PATCH",
           headers: {
@@ -129,7 +129,7 @@ export default function RecruiterJobDetails() {
 
                 <div>
                   <a
-                    href={`http://localhost:5000/uploads/${app.resume}`}
+                    href={`https://job-application-backend-gw1n.onrender.com/uploads/${app.resume}`}
                     target="_blank"
                      className="text-blue-500 underline"
                 >

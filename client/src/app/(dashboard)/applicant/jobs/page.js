@@ -11,7 +11,7 @@ export default function BrowseJobs() {
     const fetchJobs = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/jobs?keyword=${search}`
+          `https://job-application-backend-gw1n.onrender.com/api/jobs?keyword=${search}`
         );
 
         const data = await res.json();

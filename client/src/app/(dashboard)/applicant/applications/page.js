@@ -12,7 +12,7 @@ export default function MyApplications() {
         const token = localStorage.getItem("token");
 
         const res = await fetch(
-          "http://localhost:5000/api/applications/applicant",
+          "https://job-application-backend-gw1n.onrender.com/api/applications/applicant",
           {
             headers: {
               Authorization: `Bearer ${token}`,

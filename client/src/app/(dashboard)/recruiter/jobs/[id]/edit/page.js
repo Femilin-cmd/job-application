@@ -18,7 +18,7 @@ export default function EditJob() {
     const fetchJob = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/jobs/${id}`
+          `https://job-application-backend-gw1n.onrender.com/api/jobs/${id}`
         );
 
         const data = await res.json();
@@ -43,7 +43,7 @@ export default function EditJob() {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        `http://localhost:5000/api/jobs/${id}`,
+        `https://job-application-backend-gw1n.onrender.com/api/jobs/${id}`,
         {
           method: "PATCH",
           headers: {
